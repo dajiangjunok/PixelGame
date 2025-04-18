@@ -28,8 +28,13 @@ pragma solidity ^0.8.26;
 // 4. 购买格子需要花费 价值$2美元的ETH (chainlink 预言机DataFeeds), 购买的时候防止重入攻击(openzeppelin)
 // 5. 当所有格子被填满后，随机其中一个格子地址的玩家获取链上所有的ETH(chainlink 预言机 VRF)
 // 6. 所有格子重制，颜色重制
+import {AggregatorV3Interface} from "@chainlink/contracts/src/v0.8/shared/interfaces/AggregatorV3Interface.sol";
+import {PriceCoverter} from "./PriceCoverter.sol";
 
 contract PixelGame {
+    using PriceCoverter for uint256; // 导入PriceCoverter库
+    uint256 constant PIXEL_PRICE = 2; // 2美元
+
     struct Pixel {
         address player;
         uint256 pixelIndex;
