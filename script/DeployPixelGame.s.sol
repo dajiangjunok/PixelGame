@@ -41,7 +41,7 @@ contract DeployPixelGame is Script {
         }
 
         vm.startBroadcast(_deployerKey);
-        PixelGame pexelGame = new PixelGame(
+        PixelGame pixelGame = new PixelGame(
             _vrfCoordinator,
             _gasLane,
             _subscriptionId,
@@ -51,12 +51,12 @@ contract DeployPixelGame is Script {
 
         FundConsumer addConsumer = new FundConsumer();
         addConsumer.addConsumer(
-            address(pexelGame),
+            address(pixelGame),
             _vrfCoordinator,
             _subscriptionId,
             _deployerKey
         );
 
-        return (pexelGame, helperConfig);
+        return (pixelGame, helperConfig);
     }
 }

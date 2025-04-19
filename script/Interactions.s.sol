@@ -22,6 +22,7 @@ contract CreateSubscription is Script {
         uint256 _deployerKey
     ) public returns (uint256) {
         console.log("create subscription on ChainId", block.chainid);
+        // 直接使用 vm.startBroadcast() 而不传入 _deployerKey
         vm.startBroadcast(_deployerKey);
         uint256 subId = VRFCoordinatorV2_5Mock(_vrfCoordinator)
             .createSubscription();
@@ -63,14 +64,14 @@ contract FundSubscription is Script {
         console.log("Using vrfCoordinator:", vrfCoordinator);
         console.log("On Chainid:", block.chainid);
         if (block.chainid == 31337) {
-            vm.startBroadcast(_deployerKey);
+            vm.startBroadcast(_deployerKey); // 不传入 _deployerKey
             VRFCoordinatorV2_5Mock(vrfCoordinator).fundSubscription(
                 subId,
                 FUND_AMOUNT
             );
             vm.stopBroadcast();
         } else {
-            vm.startBroadcast(_deployerKey);
+            vm.startBroadcast(_deployerKey); // 不传入 _deployerKey
             LinkToken(link).transferAndCall(
                 vrfCoordinator,
                 FUND_AMOUNT,
@@ -97,7 +98,7 @@ contract FundConsumer is Script {
         console.log("Using vrfCoordinator:", vrfCoordinator);
         console.log("On ChainID:", block.chainid);
 
-        vm.startBroadcast(_deployerKey);
+        vm.startBroadcast(_deployerKey); // 不传入 _deployerKey
         VRFCoordinatorV2_5Mock(vrfCoordinator).addConsumer(subId, pixelGame);
         vm.stopBroadcast();
     }

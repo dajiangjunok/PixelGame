@@ -68,7 +68,7 @@ NETWORK_ARGS :=  --rpc-url $(SEPOLIA_RPC_URL) --private-key $(PRIVATE_KEY) --bro
  endif
 
 deploy:
-	@forge script script/DeployPixelGame.s.sol:DeployPixelGame $(NETWORK_ARGS)
+	@forge script script/DeployPixelGame.s.sol:DeployPixelGame $(NETWORK_ARGS) -vvvv
 
 # 验证已部署合约
 verify:
