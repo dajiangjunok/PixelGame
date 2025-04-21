@@ -8,11 +8,12 @@ import {LinkToken} from "../test/mocks/LinkToken.sol";
 contract HelperConfig is Script {
     struct NetworkConfig {
         address _vrfCoordinator;
-        bytes32 _gasLane; // key hash
-        uint256 _subscriptionId; // 订阅id
+        bytes32 _gasLane;
+        uint256 _subscriptionId;
         uint32 _callbackGasLimit;
         address _link;
-        uint256 _deployerKey; // deployer私钥
+        address _priceFeed; // 添加价格预言机地址
+        uint256 _deployerKey;
     }
 
     uint256 public constant DEFAULT_ANVIL_KEY =
@@ -42,9 +43,10 @@ contract HelperConfig is Script {
             NetworkConfig({
                 _vrfCoordinator: 0x9DdfaCa8183c41ad55329BdeeD9F6A8d53168B1B,
                 _gasLane: 0x787d74caea10b2b357790d5b5247c2f63d1d91572a9846f780606e4d953677ae,
-                _subscriptionId: 112913366498178522989451090515110644904461545609678574076009356837120709744272, // 设置为0，让DeployRaffle脚本自动创建订阅
+                _subscriptionId: 112913366498178522989451090515110644904461545609678574076009356837120709744272,
                 _callbackGasLimit: 500000,
                 _link: 0x779877A7B0D9E8603169DdbD7836e478b4624789,
+                _priceFeed: 0x694AA1769357215DE4FAC081bf1f309aDC325306, // ETH/USD Sepolia 价格预言机
                 _deployerKey: deployerKey
             });
     }
@@ -72,6 +74,7 @@ contract HelperConfig is Script {
                 _subscriptionId: 0, // our script will add this
                 _callbackGasLimit: 500000,
                 _link: address(link),
+                _priceFeed: 0x694AA1769357215DE4FAC081bf1f309aDC325306, // ETH/USD Sepolia 价格预言机
                 _deployerKey: DEFAULT_ANVIL_KEY
             });
     }

@@ -17,6 +17,7 @@ contract DeployPixelGame is Script {
             uint256 _subscriptionId,
             uint32 _callbackGasLimit,
             address _link,
+            address _priceFeed,
             uint256 _deployerKey
         ) = helperConfig.activeNetworkConfig();
 
@@ -45,7 +46,8 @@ contract DeployPixelGame is Script {
             _vrfCoordinator,
             _gasLane,
             _subscriptionId,
-            _callbackGasLimit
+            _callbackGasLimit,
+            _priceFeed
         );
         vm.stopBroadcast();
 

@@ -43,6 +43,7 @@ contract PixelGame is VRFConsumerBaseV2Plus, ReentrancyGuard {
     error PixelGame__NotEnoughETH(); // 付款不足
     error PixelGame__PixelAlreadyPurchased(); // 像素格子已经被购买
     error PixelGame__PixelIndexOutOfBounds(); // 像素格子索引超出范围
+    error PixelGame__TransferFailed(); // 链上向胜利者转账失败
 
     using PriceCoverter for uint256; // 导入PriceCoverter库
 
@@ -64,11 +65,12 @@ contract PixelGame is VRFConsumerBaseV2Plus, ReentrancyGuard {
         uint256[] randomWords; // 存储接收到的随机数
     }
 
+    // 像素格子结构体
     struct Pixel {
-        address player;
-        uint256 pixelIndex;
-        uint256 pixelColor;
-        bool isPurchased;
+        address player; // 玩家地址
+        uint256 pixelIndex; // 格子索引
+        uint256 pixelColor; // 格子颜色
+        bool isPurchased; // 是否已被购买
     }
 
     uint256 public prevWinnerIndex; // 上一个中奖的玩家;
@@ -96,16 +98,19 @@ contract PixelGame is VRFConsumerBaseV2Plus, ReentrancyGuard {
 
     event RequestedRaffleWinner(uint256 indexed requestId);
 
+    // 需要在构造函数中添加初始化
     constructor(
         address _vrfCoordinator,
         bytes32 _gasLane,
         uint256 _subscriptionId,
-        uint32 _callbackGasLimit
+        uint32 _callbackGasLimit,
+        address _priceFeed // 添加价格预言机地址参数
     ) VRFConsumerBaseV2Plus(_vrfCoordinator) {
         i_vrfCoordinator = IVRFCoordinatorV2Plus(_vrfCoordinator);
         i_gasLane = _gasLane;
         i_subscriptionId = _subscriptionId;
         i_callbackGasLimit = _callbackGasLimit;
+        s_priceFeed = AggregatorV3Interface(_priceFeed); // 初始化价格预言机
     }
 
     /////////////
@@ -195,11 +200,20 @@ contract PixelGame is VRFConsumerBaseV2Plus, ReentrancyGuard {
 
         prevWinnerIndex = _randomWords[0] % pixelArray.length;
 
-        // 重置所有格子的颜色
-        resetPixels();
-        emit RequestFulfilled(_requestId, _randomWords, prevWinnerIndex);
+        // 链上资金发送给中奖的玩家
+        address winner = pixelMapping[prevWinnerIndex].player;
+        uint256 prize = address(this).balance;
+        (bool success, ) = winner.call{value: prize}("");
+        if (!success) {
+            revert PixelGame__TransferFailed();
+        } else {
+            // 重置所有格子的颜色
+            resetPixels();
+            emit RequestFulfilled(_requestId, _randomWords, prevWinnerIndex);
+        }
     }
 
+    // 重制像素格子
     function resetPixels() private {
         for (uint256 i = 0; i < pixelArray.length; i++) {
             pixelArray[i] = 0;
@@ -217,8 +231,19 @@ contract PixelGame is VRFConsumerBaseV2Plus, ReentrancyGuard {
         return true;
     }
 
+    ///////////////////////////
+    // view & pure functions //
+    ///////////////////////////
     // 获取整个像素数组
     function getPixelArray() public view returns (uint256[] memory) {
         return pixelArray;
+    }
+
+    // 获取单个格子购买者信息
+    function getPixelInfo(
+        uint256 pixelIndex
+    ) public view returns (Pixel memory) {
+        Pixel memory pixel = pixelMapping[pixelIndex];
+        return pixel;
     }
 }
