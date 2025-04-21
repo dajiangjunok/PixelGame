@@ -216,4 +216,9 @@ contract PixelGame is VRFConsumerBaseV2Plus, ReentrancyGuard {
         }
         return true;
     }
+
+    // 获取整个像素数组
+    function getPixelArray() public view returns (uint256[] memory) {
+        return pixelArray;
+    }
 }

@@ -26,7 +26,7 @@
     {
       "hash": "0x484bed0d513d66e72be8bb7b61d5218c3e337474a1fe9caa8b2647e1d0c380de",
       "transactionType": "CALL",
-      "contractName": null,
+      "contractName": "VRFCoordinatorV2_5",
       "contractAddress": "0x9ddfaca8183c41ad55329bdeed9f6a8d53168b1b",
       "function": "addConsumer(uint256,address)",
       "arguments": [
