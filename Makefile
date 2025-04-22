@@ -5,6 +5,9 @@ build:; forge build
 deploy-sepolia:
 	@forge script script/DeployPixelGame.s.sol:DeployPixelGame --rpc-url $(SEPOLIA_RPC_URL) --private-key $(PRIVATE_KEY) --broadcast --verify  --etherscan-api-key $(ETHERSCAN_API_KEY) -vvvv
 
+
+deploy-monad:
+	@forge script script/DeployPixelGame.s.sol:DeployPixelGame --rpc-url $(MONAD_RPC_URL) --private-key $(PRIVATE_KEY) --broadcast --verify  --etherscan-api-key $(MONAD_API_KEY) -vvvv
 	 
 	 # ----------------------------
 # Foundry 智能合约 Makefile
@@ -82,6 +85,15 @@ verify:
 			"500000") \
 		${CONTRACT_ADDRESS} \
 		${CONTRACT_NAME} \
+		--watch
+
+		# 验证已部署合约
+verify-monad:
+	@forge verify-contract \
+		--chain-id ${MONAD_CHAINID} \
+		--etherscan-api-key ${MONAD_API_KEY} \
+		${MONAD_CONTRACT_ADDRESS} \
+		${MONAD_CONTRACT_NAME} \
 		--watch
 
  
