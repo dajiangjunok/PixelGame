@@ -95,7 +95,12 @@ verify-monad:
 		${MONAD_CONTRACT_ADDRESS} \
 		${MONAD_CONTRACT_NAME} \
 		--watch
-
+# forge verify-contract \
+#     --rpc-url https://testnet-rpc.monad.xyz \
+#     --verifier sourcify \
+#     --verifier-url https://sourcify-api-monad.blockvision.org \
+#     0x8c7b6a6f25c767588f1838bd08d798383c23cafa \
+#     src/PixelGame.sol:PixelGame
  
 
 # 主网分叉测试
