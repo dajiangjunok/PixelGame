@@ -73,7 +73,7 @@ contract PixelGame is VRFConsumerBaseV2Plus, ReentrancyGuard {
         bool isPurchased; // 是否已被购买
     }
 
-    uint256 public prevWinnerIndex; // 上一个中奖的玩家;
+    address public prevWinner; // 上一个中奖的玩家;
     uint256[] public pixelArray = new uint256[](25);
     mapping(uint256 index => Pixel pixel) public pixelMapping;
     // 映射：requestID -> 请求状态
@@ -198,7 +198,7 @@ contract PixelGame is VRFConsumerBaseV2Plus, ReentrancyGuard {
         s_requests[_requestId].fulfilled = true;
         s_requests[_requestId].randomWords = _randomWords;
 
-        prevWinnerIndex = _randomWords[0] % pixelArray.length;
+        uint256 prevWinnerIndex = _randomWords[0] % pixelArray.length;
 
         // 链上资金发送给中奖的玩家
         address winner = pixelMapping[prevWinnerIndex].player;
@@ -207,6 +207,7 @@ contract PixelGame is VRFConsumerBaseV2Plus, ReentrancyGuard {
         if (!success) {
             revert PixelGame__TransferFailed();
         } else {
+            prevWinner = winner;
             // 重置所有格子的颜色
             resetPixels();
             emit RequestFulfilled(_requestId, _randomWords, prevWinnerIndex);
